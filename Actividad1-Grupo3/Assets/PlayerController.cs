@@ -7,18 +7,27 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float moveInput;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        // Capturamos el movimiento
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // Salto
+        if (moveInput > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (moveInput < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -27,11 +36,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Movimiento por físicas
         rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
     }
-
-    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -39,7 +45,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
-    } 
+    }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
@@ -47,5 +53,5 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
-    } 
+    }
 }
