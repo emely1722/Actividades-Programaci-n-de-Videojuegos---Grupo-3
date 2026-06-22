@@ -18,8 +18,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float moveInput;
     private SpriteRenderer spriteRenderer;
-    private Animator animator;    
-     
+    private Animator animator;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -65,7 +65,6 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
             animator.SetBool("IsJumping", true);
-
 
             jumpBufferCounter = 0f;
             coyoteTimeCounter = 0f;
