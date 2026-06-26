@@ -118,6 +118,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Coleccionable coleccionable = other.GetComponent<Coleccionable>();
+
+        if (coleccionable != null && !coleccionable.IntentarRecolectar())
+        {
+            return;
+        }
+
         // Control de Manzanas
         if (other.CompareTag("CollectibleApple"))
         {
@@ -136,8 +143,12 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Recolectar(GameObject objeto)
     {
+        Collider2D colisionador = objeto.GetComponent<Collider2D>();
+        if (colisionador != null)
+        {
+            colisionador.enabled = false;
+        }
         Animator anim = objeto.GetComponent<Animator>();
-
         if (anim != null)
         {
             foreach (AnimatorControllerParameter param in anim.parameters)
@@ -149,9 +160,21 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-
         yield return new WaitForSeconds(0.35f);
         Destroy(objeto);
+    }
+
+    public class Coleccionable : MonoBehaviour
+    {
+        private bool yaRecolectado = false;
+
+        public bool IntentarRecolectar()
+        {
+            if (yaRecolectado) return false;
+
+            yaRecolectado = true;
+            return true;
+        }
     }
 
     private void ActualizarUI()
