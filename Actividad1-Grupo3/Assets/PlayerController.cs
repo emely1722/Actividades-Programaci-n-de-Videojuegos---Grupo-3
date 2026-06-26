@@ -4,15 +4,16 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movimiento")]
     public float speed = 5f;
     public float jumpForce = 7f;
     public float fallMultiplier = 2.5f;
     public float lowJumpMultiplier = 2f;
     public float maxFallSpeed = -15f;
 
+    [Header("Jump Juice")]
     public float coyoteTime = 0.2f;
     private float coyoteTimeCounter;
-
     public float jumpBufferTime = 0.2f;
     private float jumpBufferCounter;
 
@@ -27,7 +28,6 @@ public class PlayerController : MonoBehaviour
 
     private int apple = 0;
     private int banana = 0;
-    private bool recolectando = false;
 
     void Start()
     {
@@ -74,9 +74,7 @@ public class PlayerController : MonoBehaviour
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-
             animator.SetBool("IsJumping", true);
-
             jumpBufferCounter = 0f;
             coyoteTimeCounter = 0f;
         }
@@ -120,21 +118,19 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (recolectando) return;
-
+        // Control de Manzanas
         if (other.CompareTag("CollectibleApple"))
         {
-            recolectando = true;
             apple++;
-            StartCoroutine(Recolectar(other.gameObject));
             ActualizarUI();
+            StartCoroutine(Recolectar(other.gameObject));
         }
+        // Control de Bananas
         else if (other.CompareTag("CollectibleBanana"))
         {
-            recolectando = true;
             banana++;
-            StartCoroutine(Recolectar(other.gameObject));
             ActualizarUI();
+            StartCoroutine(Recolectar(other.gameObject));
         }
     }
 
@@ -144,12 +140,17 @@ public class PlayerController : MonoBehaviour
 
         if (anim != null)
         {
-            anim.SetTrigger("Collect");
+            foreach (AnimatorControllerParameter param in anim.parameters)
+            {
+                if (param.name == "Collect")
+                {
+                    anim.SetTrigger("Collect");
+                    break;
+                }
+            }
         }
 
         yield return new WaitForSeconds(0.35f);
-
-        recolectando = false;
         Destroy(objeto);
     }
 
