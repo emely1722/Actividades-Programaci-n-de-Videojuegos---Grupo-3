@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic; // REQUISITO: Añade esta línea arriba del todo
 
 public class PlayerController : MonoBehaviour
 {
@@ -29,6 +30,8 @@ public class PlayerController : MonoBehaviour
     private int apple = 0;
     private int banana = 0;
 
+    private List<GameObject> objetosRecolectados = new List<GameObject>();
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -41,35 +44,16 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         moveInput = Input.GetAxisRaw("Horizontal");
-
         animator.SetFloat("Velocidad horizontal", Mathf.Abs(moveInput));
 
-        if (moveInput > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (moveInput < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
+        if (moveInput > 0) spriteRenderer.flipX = false;
+        else if (moveInput < 0) spriteRenderer.flipX = true;
 
-        if (isGrounded)
-        {
-            coyoteTimeCounter = coyoteTime;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-        }
+        if (isGrounded) coyoteTimeCounter = coyoteTime;
+        else coyoteTimeCounter -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            jumpBufferCounter = jumpBufferTime;
-        }
-        else
-        {
-            jumpBufferCounter -= Time.deltaTime;
-        }
+        if (Input.GetKeyDown(KeyCode.Space)) jumpBufferCounter = jumpBufferTime;
+        else jumpBufferCounter -= Time.deltaTime;
 
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
@@ -118,9 +102,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Coleccionable coleccionable = other.GetComponent<Coleccionable>();
-
-        if (coleccionable != null && !coleccionable.IntentarRecolectar())
+        if (objetosRecolectados.Contains(other.gameObject))
         {
             return;
         }
@@ -128,6 +110,7 @@ public class PlayerController : MonoBehaviour
         // Control de Manzanas
         if (other.CompareTag("CollectibleApple"))
         {
+            objetosRecolectados.Add(other.gameObject); 
             apple++;
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
@@ -135,6 +118,7 @@ public class PlayerController : MonoBehaviour
         // Control de Bananas
         else if (other.CompareTag("CollectibleBanana"))
         {
+            objetosRecolectados.Add(other.gameObject);
             banana++;
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
@@ -148,6 +132,7 @@ public class PlayerController : MonoBehaviour
         {
             colisionador.enabled = false;
         }
+
         Animator anim = objeto.GetComponent<Animator>();
         if (anim != null)
         {
@@ -160,21 +145,15 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
         yield return new WaitForSeconds(0.35f);
-        Destroy(objeto);
-    }
 
-    public class Coleccionable : MonoBehaviour
-    {
-        private bool yaRecolectado = false;
-
-        public bool IntentarRecolectar()
+        if (objetosRecolectados.Contains(objeto))
         {
-            if (yaRecolectado) return false;
-
-            yaRecolectado = true;
-            return true;
+            objetosRecolectados.Remove(objeto);
         }
+
+        Destroy(objeto);
     }
 
     private void ActualizarUI()
