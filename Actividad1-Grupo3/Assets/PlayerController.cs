@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
-using System.Collections.Generic; // REQUISITO: Añade esta línea arriba del todo
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
