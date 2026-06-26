@@ -1,4 +1,6 @@
 using UnityEngine;
+using TMPro;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,17 +16,26 @@ public class PlayerController : MonoBehaviour
     public float jumpBufferTime = 0.2f;
     private float jumpBufferCounter;
 
+    [Header("UI")]
+    public TMP_Text contadorJuego;
+
     private Rigidbody2D rb;
     private bool isGrounded;
     private float moveInput;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
 
+    private int apple = 0;
+    private int banana = 0;
+    private bool recolectando = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        ActualizarUI();
     }
 
     void Update()
@@ -107,13 +118,46 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.CompareTag("Player"))
+        if (recolectando) return;
+
+        if (other.CompareTag("CollectibleApple"))
         {
-            GetComponent<SpriteRenderer>().enabled = false;
-            gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            Destroy(gameObject, 0.5f);
+            recolectando = true;
+            apple++;
+            StartCoroutine(Recolectar(other.gameObject));
+            ActualizarUI();
+        }
+        else if (other.CompareTag("CollectibleBanana"))
+        {
+            recolectando = true;
+            banana++;
+            StartCoroutine(Recolectar(other.gameObject));
+            ActualizarUI();
+        }
+    }
+
+    private IEnumerator Recolectar(GameObject objeto)
+    {
+        Animator anim = objeto.GetComponent<Animator>();
+
+        if (anim != null)
+        {
+            anim.SetTrigger("Collect");
+        }
+
+        yield return new WaitForSeconds(0.35f);
+
+        recolectando = false;
+        Destroy(objeto);
+    }
+
+    private void ActualizarUI()
+    {
+        if (contadorJuego != null)
+        {
+            contadorJuego.text = "Apple: " + apple + " | Banana: " + banana;
         }
     }
 }
