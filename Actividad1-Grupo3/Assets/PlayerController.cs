@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -98,19 +99,18 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
+
     }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (objetosRecolectados.Contains(other.gameObject))
-        {
-            return;
-        }
-
         // Control de Manzanas
         if (other.CompareTag("CollectibleApple"))
         {
-            objetosRecolectados.Add(other.gameObject); 
+            if (objetosRecolectados.Contains(other.gameObject)) return;
+
+            objetosRecolectados.Add(other.gameObject);
             apple++;
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
@@ -118,10 +118,17 @@ public class PlayerController : MonoBehaviour
         // Control de Bananas
         else if (other.CompareTag("CollectibleBanana"))
         {
+            if (objetosRecolectados.Contains(other.gameObject)) return;
+
             objetosRecolectados.Add(other.gameObject);
             banana++;
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
+        }
+       
+        else if (other.CompareTag("Enemy"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
