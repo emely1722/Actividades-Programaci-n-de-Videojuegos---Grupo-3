@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour
     private float jumpBufferCounter;
 
     [Header("UI")]
-    public TMP_Text contadorJuego;
+    public TMP_Text appleText;
+    public TMP_Text bananaText;
 
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -165,9 +166,14 @@ public class PlayerController : MonoBehaviour
 
     private void ActualizarUI()
     {
-        if (contadorJuego != null)
+        if (appleText != null)
         {
-            contadorJuego.text = "Apple: " + apple + " | Banana: " + banana;
+            appleText.text = $"x{apple:00}";
+        }
+
+        if (bananaText != null)
+        {
+            bananaText.text = $"x{banana:00}";
         }
     }
 }
