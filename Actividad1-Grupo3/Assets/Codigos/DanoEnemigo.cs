@@ -6,12 +6,23 @@ public class DanoEnemigo : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        PlayerHealth vidaJugador =
+        PlayerHealth jugador =
             collision.collider.GetComponentInParent<PlayerHealth>();
 
-        if (vidaJugador != null)
+        if (jugador != null)
         {
-            vidaJugador.RecibirDano(dano);
+            jugador.RecibirDanio(dano);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        PlayerHealth jugador =
+            other.GetComponentInParent<PlayerHealth>();
+
+        if (jugador != null)
+        {
+            jugador.RecibirDanio(dano);
         }
     }
 }
