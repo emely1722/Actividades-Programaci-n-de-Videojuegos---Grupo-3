@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,11 +22,15 @@ public class PlayerController : MonoBehaviour
     public TMP_Text appleText;
     public TMP_Text bananaText;
 
+    [Header("Curación")]
+    public int curacionFruta = 10;
+
     private Rigidbody2D rb;
     private bool isGrounded;
     private float moveInput;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private PlayerHealth playerHealth;
 
     private int apple = 0;
     private int banana = 0;
@@ -39,6 +42,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        playerHealth = GetComponent<PlayerHealth>();
 
         ActualizarUI();
     }
@@ -113,6 +117,12 @@ public class PlayerController : MonoBehaviour
 
             objetosRecolectados.Add(other.gameObject);
             apple++;
+
+            if (playerHealth != null)
+            {
+                playerHealth.RecuperarVida(curacionFruta);
+            }
+
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
         }
@@ -123,13 +133,14 @@ public class PlayerController : MonoBehaviour
 
             objetosRecolectados.Add(other.gameObject);
             banana++;
+
+            if (playerHealth != null)
+            {
+                playerHealth.RecuperarVida(curacionFruta);
+            }
+
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
-        }
-       
-        else if (other.CompareTag("Enemy"))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 

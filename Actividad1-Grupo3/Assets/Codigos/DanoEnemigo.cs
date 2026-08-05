@@ -6,8 +6,7 @@ public class DanoEnemigo : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        PlayerHealth jugador =
-            collision.collider.GetComponentInParent<PlayerHealth>();
+        PlayerHealth jugador = collision.collider.GetComponentInParent<PlayerHealth>();
 
         if (jugador != null)
         {
@@ -17,8 +16,7 @@ public class DanoEnemigo : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerHealth jugador =
-            other.GetComponentInParent<PlayerHealth>();
+        PlayerHealth jugador = other.GetComponentInParent<PlayerHealth>();
 
         if (jugador != null)
         {

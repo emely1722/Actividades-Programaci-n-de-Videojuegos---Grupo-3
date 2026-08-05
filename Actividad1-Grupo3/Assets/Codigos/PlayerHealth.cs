@@ -9,38 +9,32 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int vidaMaxima = 100;
     [SerializeField] private int vidaActual;
 
-    [Header("Barra de vida")]
+    [Header("Interfaz")]
     [SerializeField] private Slider barraVida;
 
-    [Header("Invulnerabilidad")]
+    [Header("Protección después de recibir daño")]
     [SerializeField] private float tiempoInvulnerable = 1f;
 
-    private bool invulnerable;
-    private bool muerto;
+    private bool esInvulnerable;
 
-    private void Awake()
+    private void Start()
     {
         vidaActual = vidaMaxima;
-
-        if (barraVida != null)
-        {
-            barraVida.minValue = 0;
-            barraVida.maxValue = vidaMaxima;
-            barraVida.value = vidaActual;
-        }
+        ActualizarBarra();
     }
 
+    // quita vida al jugador
     public void RecibirDanio(int cantidad)
     {
-        if (invulnerable || muerto || cantidad <= 0)
+        if (esInvulnerable || vidaActual <= 0)
+        {
             return;
+        }
 
         vidaActual -= cantidad;
         vidaActual = Mathf.Clamp(vidaActual, 0, vidaMaxima);
 
         ActualizarBarra();
-
-        Debug.Log("Vida actual: " + vidaActual);
 
         if (vidaActual <= 0)
         {
@@ -48,46 +42,48 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            StartCoroutine(InvulnerabilidadTemporal());
+            StartCoroutine(ActivarInvulnerabilidad());
         }
     }
 
+    // le devuelve vida sin superar la vida máxima
     public void RecuperarVida(int cantidad)
     {
-        if (muerto || cantidad <= 0)
+        if (vidaActual <= 0)
+        {
             return;
+        }
 
         vidaActual += cantidad;
         vidaActual = Mathf.Clamp(vidaActual, 0, vidaMaxima);
 
         ActualizarBarra();
-
-        Debug.Log("Vida recuperada. Vida actual: " + vidaActual);
     }
 
     private void ActualizarBarra()
     {
-        if (barraVida != null)
+        if (barraVida == null)
         {
-            barraVida.value = vidaActual;
+            return;
         }
+
+        barraVida.minValue = 0;
+        barraVida.maxValue = vidaMaxima;
+        barraVida.value = vidaActual;
     }
 
-    private IEnumerator InvulnerabilidadTemporal()
+    private IEnumerator ActivarInvulnerabilidad()
     {
-        invulnerable = true;
+        esInvulnerable = true;
 
         yield return new WaitForSeconds(tiempoInvulnerable);
 
-        invulnerable = false;
+        esInvulnerable = false;
     }
 
     private void Morir()
     {
-        muerto = true;
-
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().buildIndex
-        );
+        // escena solamente se reinicia cuando la vida llega a cero
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
