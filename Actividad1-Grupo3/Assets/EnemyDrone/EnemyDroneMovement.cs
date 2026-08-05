@@ -102,17 +102,38 @@ public class EnemyDroneMovement : MonoBehaviour
             animator.SetTrigger("attack");
         }
 
-        if (laserPrefab == null) return;
+        if (laserPrefab == null)
+        {
+            Debug.LogError("error");
+            return;
+        }
+
+        if (jugador == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) jugador = p.transform;
+        }
 
         Vector3 origen = puntoDisparo != null ? puntoDisparo.position : transform.position;
+
+        origen.z = 0f;
+
         GameObject laser = Instantiate(laserPrefab, origen, Quaternion.identity);
 
-        Vector2 direccion = (jugador.position - origen).normalized;
+        Vector2 direccion = Vector2.left; 
+        if (jugador != null)
+        {
+            direccion = (jugador.position - origen).normalized;
+        }
 
         LaserProyectil proyectil = laser.GetComponent<LaserProyectil>();
         if (proyectil != null)
         {
             proyectil.EstablecerDireccion(direccion);
+        }
+        else
+        {
+            Debug.LogError("error");
         }
     }
 

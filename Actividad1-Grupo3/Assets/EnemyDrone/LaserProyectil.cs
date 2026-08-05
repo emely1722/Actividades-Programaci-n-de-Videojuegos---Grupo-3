@@ -18,12 +18,9 @@ public class LaserProyectil : MonoBehaviour
         transform.Translate(direccionDisparo * velocidad * Time.deltaTime, Space.World);
     }
 
-    public void EstablecerDireccion(Vector2 direccion)
+    public void EstablecerDireccion(Vector2 dir)
     {
-        direccionDisparo = direccion.normalized;
-
-        float angulo = Mathf.Atan2(direccionDisparo.y, direccionDisparo.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angulo);
+        direccionDisparo = dir;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

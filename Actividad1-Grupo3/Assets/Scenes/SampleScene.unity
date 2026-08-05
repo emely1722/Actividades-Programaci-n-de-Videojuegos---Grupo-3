@@ -6105,7 +6105,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 4294967295
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6185,7 +6185,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 4294967295
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6205,7 +6205,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 4294967295
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6248,7 +6248,7 @@ Tilemap:
     m_RefCount: 1
     m_Data: {fileID: 2376107565742220442, guid: 6538d1515f4e33a4686d17cebc550fca, type: 3}
   - serializedVersion: 2
-    m_RefCount: 0
+    m_RefCount: 3
     m_Data: {fileID: 1345321338}
   m_TileMatrixArray:
   - serializedVersion: 2
@@ -7901,7 +7901,6 @@ GameObject:
   - component: {fileID: 2100516680}
   - component: {fileID: 2100516685}
   - component: {fileID: 2100516686}
-  - component: {fileID: 2100516687}
   - component: {fileID: 2100516688}
   m_Layer: 7
   m_Name: Player
@@ -8092,22 +8091,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2100516687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2100516679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb9f7a3a41ef3b4cb1a5277b4e132ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  vidaMaxima: 100
-  vidaActual: 0
-  barraVida: {fileID: 2046548991}
-  tiempoInvulnerable: 1
 --- !u!114 &2100516688
 MonoBehaviour:
   m_ObjectHideFlags: 0
