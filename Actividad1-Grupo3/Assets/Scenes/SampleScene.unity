@@ -450,7 +450,7 @@ Transform:
   m_GameObject: {fileID: 46079228}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -689.17, y: -310.46, z: 0}
+  m_LocalPosition: {x: -598.6, y: -339.9, z: 0}
   m_LocalScale: {x: 0.2283506, y: 0.24129716, z: 1.5965039}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -708,8 +708,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ComplexEnemy
   velocidad: 2
   player: {fileID: 2100516684}
-  detectionRange: 5
-  attackRange: 1.5
+  detectionRange: 2
+  attackRange: 2
+  tiempoEntreAtaques: 1.5
+  dano: 20
 --- !u!212 &82488124
 SpriteRenderer:
   serializedVersion: 2
@@ -5143,8 +5145,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ComplexEnemy
   velocidad: 2
   player: {fileID: 2100516684}
-  detectionRange: 5
-  attackRange: 1.5
+  detectionRange: 6
+  attackRange: 3
+  tiempoEntreAtaques: 1.5
+  dano: 20
 --- !u!95 &1104833032
 Animator:
   serializedVersion: 7
