@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     public TMP_Text appleText;
     public TMP_Text bananaText;
 
+    [Header("Victoria")]
+    public GameObject panelVictoria;
+
     [Header("Curación")]
     public int curacionFruta = 10;
 
@@ -45,6 +48,11 @@ public class PlayerController : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
 
         ActualizarUI();
+
+        if (panelVictoria != null)
+        {
+            panelVictoria.SetActive(false);
+        }
     }
 
     void Update()
@@ -96,6 +104,14 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             animator.SetBool("IsJumping", false);
         }
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (playerHealth != null)
+            {
+                playerHealth.RecibirDanio(20);
+            }
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -142,6 +158,12 @@ public class PlayerController : MonoBehaviour
             ActualizarUI();
             StartCoroutine(Recolectar(other.gameObject));
         }
+
+        else if (other.CompareTag("Finish"))
+        {
+            GanarJuego();
+            Destroy(other.gameObject);
+        }
     }
 
     private IEnumerator Recolectar(GameObject objeto)
@@ -186,5 +208,15 @@ public class PlayerController : MonoBehaviour
         {
             bananaText.text = $"x{banana:00}";
         }
+    }
+
+    private void GanarJuego()
+    {
+        if (panelVictoria != null)
+        {
+            panelVictoria.SetActive(true);
+        }
+
+        Time.timeScale = 0f;
     }
 }
