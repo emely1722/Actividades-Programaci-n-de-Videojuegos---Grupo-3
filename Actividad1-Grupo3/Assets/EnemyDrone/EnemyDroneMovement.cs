@@ -7,11 +7,18 @@ public class EnemyDroneMovement : MonoBehaviour
     [SerializeField] private float speed = 1.5f;
     [SerializeField] private float distance = 3f;
 
-    [Header("Detección y Disparo")]
+    [Header("Detección y disparo")]
     [SerializeField] private float rangoAtaque = 8f;
     [SerializeField] private float tiempoEntreDisparos = 2f;
-    [SerializeField] private GameObject laserPrefab;
+
+   
+    [SerializeField] private Proyectil proyectilPrefab;
+
     [SerializeField] private Transform puntoDisparo;
+
+    [Header("Orientación")]
+    [Tooltip("Actívalo si el sprite original del dron mira hacia la derecha.")]
+    [SerializeField] private bool spriteOriginalMiraDerecha = true;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -22,6 +29,8 @@ public class EnemyDroneMovement : MonoBehaviour
     private bool movingRight = true;
     private float tiempoSiguienteDisparo;
 
+    private float puntoDisparoXInicial;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -29,24 +38,44 @@ public class EnemyDroneMovement : MonoBehaviour
         animator = GetComponent<Animator>();
 
         startingX = rb.position.x;
+
+        if (puntoDisparo != null)
+        {
+            puntoDisparoXInicial =
+                Mathf.Abs(puntoDisparo.localPosition.x);
+        }
     }
 
     private void Start()
     {
-        GameObject jugadorGO = GameObject.FindGameObjectWithTag("Player");
+        GameObject jugadorGO =
+            GameObject.FindGameObjectWithTag("Player");
+
         if (jugadorGO != null)
         {
             jugador = jugadorGO.transform;
         }
+        else
+        {
+            Debug.LogError(
+                "EnemyDroneMovement: no se encontró un objeto con Tag Player."
+            );
+        }
+
+        ActualizarPuntoDisparo();
     }
 
     private void FixedUpdate()
     {
         if (jugador != null)
         {
-            float distanciaJugador = Vector2.Distance(rb.position, jugador.position);
+            float distanciaJugador = Vector2.Distance(
+                rb.position,
+                jugador.position
+            );
 
-            // dron dispara
+            // Cuando el jugador entra en rango, deja de patrullar,
+            // apunta y dispara.
             if (distanciaJugador <= rangoAtaque)
             {
                 ApuntarAJugador();
@@ -54,20 +83,26 @@ public class EnemyDroneMovement : MonoBehaviour
                 if (Time.time >= tiempoSiguienteDisparo)
                 {
                     Disparar();
-                    tiempoSiguienteDisparo = Time.time + tiempoEntreDisparos;
+
+                    tiempoSiguienteDisparo =
+                        Time.time + tiempoEntreDisparos;
                 }
+
                 return;
             }
         }
 
-        // patrulla de un lado a otro
         Patrullar();
     }
 
     private void Patrullar()
     {
-        float targetX = movingRight ? startingX + distance : startingX - distance;
-        Vector2 targetPosition = new Vector2(targetX, rb.position.y);
+        float targetX = movingRight
+            ? startingX + distance
+            : startingX - distance;
+
+        Vector2 targetPosition =
+            new Vector2(targetX, rb.position.y);
 
         Vector2 nextPosition = Vector2.MoveTowards(
             rb.position,
@@ -77,7 +112,10 @@ public class EnemyDroneMovement : MonoBehaviour
 
         rb.MovePosition(nextPosition);
 
-        if (Vector2.Distance(rb.position, targetPosition) <= 0.02f)
+        if (Vector2.Distance(
+                rb.position,
+                targetPosition
+            ) <= 0.02f)
         {
             ChangeDirection();
         }
@@ -85,11 +123,14 @@ public class EnemyDroneMovement : MonoBehaviour
 
     private void ApuntarAJugador()
     {
-        if (jugador.position.x > transform.position.x && !movingRight)
+        if (jugador.position.x > transform.position.x &&
+            !movingRight)
         {
             ChangeDirection();
         }
-        else if (jugador.position.x < transform.position.x && movingRight)
+        else if (
+            jugador.position.x < transform.position.x &&
+            movingRight)
         {
             ChangeDirection();
         }
@@ -102,38 +143,49 @@ public class EnemyDroneMovement : MonoBehaviour
             animator.SetTrigger("attack");
         }
 
-        if (laserPrefab == null)
+        if (proyectilPrefab == null)
         {
-            Debug.LogError("error");
+            Debug.LogError(
+                "EnemyDroneMovement: falta asignar el prefab de la bolita.",
+                this
+            );
+
             return;
         }
 
         if (jugador == null)
+            return;
+
+        Vector2 origen = puntoDisparo != null
+            ? puntoDisparo.position
+            : transform.position;
+
+        Vector2 direccion =
+            ((Vector2)jugador.position - origen).normalized;
+
+        Proyectil nuevoProyectil = Instantiate(
+            proyectilPrefab,
+            origen,
+            Quaternion.identity
+        );
+
+        nuevoProyectil.EstablecerDireccion(direccion);
+
+        // Impide que la bolita choque inmediatamente
+        // con el propio dron.
+        Collider2D colliderDrone =
+            GetComponent<Collider2D>();
+
+        Collider2D colliderProyectil =
+            nuevoProyectil.GetComponent<Collider2D>();
+
+        if (colliderDrone != null &&
+            colliderProyectil != null)
         {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) jugador = p.transform;
-        }
-
-        Vector3 origen = puntoDisparo != null ? puntoDisparo.position : transform.position;
-
-        origen.z = 0f;
-
-        GameObject laser = Instantiate(laserPrefab, origen, Quaternion.identity);
-
-        Vector2 direccion = Vector2.left; 
-        if (jugador != null)
-        {
-            direccion = (jugador.position - origen).normalized;
-        }
-
-        LaserProyectil proyectil = laser.GetComponent<LaserProyectil>();
-        if (proyectil != null)
-        {
-            proyectil.EstablecerDireccion(direccion);
-        }
-        else
-        {
-            Debug.LogError("error");
+            Physics2D.IgnoreCollision(
+                colliderDrone,
+                colliderProyectil
+            );
         }
     }
 
@@ -143,13 +195,52 @@ public class EnemyDroneMovement : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            spriteRenderer.flipX = !spriteRenderer.flipX;
+            spriteRenderer.flipX =
+                !spriteRenderer.flipX;
         }
+
+        ActualizarPuntoDisparo();
+    }
+
+    private void ActualizarPuntoDisparo()
+    {
+        if (puntoDisparo == null ||
+            spriteRenderer == null)
+        {
+            return;
+        }
+
+        bool mirandoDerecha;
+
+        if (spriteOriginalMiraDerecha)
+        {
+            mirandoDerecha =
+                !spriteRenderer.flipX;
+        }
+        else
+        {
+            mirandoDerecha =
+                spriteRenderer.flipX;
+        }
+
+        Vector3 posicionLocal =
+            puntoDisparo.localPosition;
+
+        posicionLocal.x = mirandoDerecha
+            ? puntoDisparoXInicial
+            : -puntoDisparoXInicial;
+
+        puntoDisparo.localPosition =
+            posicionLocal;
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, rangoAtaque);
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            rangoAtaque
+        );
     }
 }

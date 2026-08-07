@@ -15,49 +15,93 @@ public class PlayerHealth : MonoBehaviour
     [Header("Protección después de recibir daño")]
     [SerializeField] private float tiempoInvulnerable = 1f;
 
+    [Header("Animación de daño")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private string triggerDanio = "Hurt";
+
     private bool esInvulnerable;
+    private bool estaMuerto;
+
+    private Coroutine rutinaInvulnerabilidad;
+
+    private void Awake()
+    {
+        vidaActual = vidaMaxima;
+
+        // Busca automáticamente el Animator si no fue asignado.
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
+    }
 
     private void Start()
     {
-        vidaActual = vidaMaxima;
         ActualizarBarra();
     }
 
-    // quita vida al jugador
+    // Quita vida al jugador.
     public void RecibirDanio(int cantidad)
     {
-        if (esInvulnerable || vidaActual <= 0)
+        if (cantidad <= 0 || esInvulnerable || estaMuerto)
         {
             return;
         }
 
+        // Se activa inmediatamente para impedir golpes duplicados.
+        esInvulnerable = true;
+
         vidaActual -= cantidad;
-        vidaActual = Mathf.Clamp(vidaActual, 0, vidaMaxima);
+        vidaActual = Mathf.Clamp(
+            vidaActual,
+            0,
+            vidaMaxima
+        );
 
         ActualizarBarra();
+        ReproducirAnimacionDanio();
+
+        Debug.Log(
+            "Daño recibido: " + cantidad +
+            " | Vida actual: " + vidaActual
+        );
 
         if (vidaActual <= 0)
         {
             Morir();
+            return;
         }
-        else
+
+        if (rutinaInvulnerabilidad != null)
         {
-            StartCoroutine(ActivarInvulnerabilidad());
+            StopCoroutine(rutinaInvulnerabilidad);
         }
+
+        rutinaInvulnerabilidad =
+            StartCoroutine(ActivarInvulnerabilidad());
     }
 
-    // le devuelve vida sin superar la vida máxima
+    // Recupera vida sin superar la cantidad máxima.
     public void RecuperarVida(int cantidad)
     {
-        if (vidaActual <= 0)
+        if (cantidad <= 0 || estaMuerto)
         {
             return;
         }
 
         vidaActual += cantidad;
-        vidaActual = Mathf.Clamp(vidaActual, 0, vidaMaxima);
+        vidaActual = Mathf.Clamp(
+            vidaActual,
+            0,
+            vidaMaxima
+        );
 
         ActualizarBarra();
+
+        Debug.Log(
+            "Vida recuperada: " + cantidad +
+            " | Vida actual: " + vidaActual
+        );
     }
 
     private void ActualizarBarra()
@@ -72,18 +116,46 @@ public class PlayerHealth : MonoBehaviour
         barraVida.value = vidaActual;
     }
 
+    private void ReproducirAnimacionDanio()
+    {
+        if (animator == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(triggerDanio))
+        {
+            return;
+        }
+
+        animator.ResetTrigger(triggerDanio);
+        animator.SetTrigger(triggerDanio);
+    }
+
     private IEnumerator ActivarInvulnerabilidad()
     {
-        esInvulnerable = true;
-
-        yield return new WaitForSeconds(tiempoInvulnerable);
+        yield return new WaitForSeconds(
+            tiempoInvulnerable
+        );
 
         esInvulnerable = false;
+        rutinaInvulnerabilidad = null;
     }
 
     private void Morir()
     {
-        // escena solamente se reinicia cuando la vida llega a cero
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (estaMuerto)
+        {
+            return;
+        }
+
+        estaMuerto = true;
+        StopAllCoroutines();
+
+        Debug.Log("El jugador murió.");
+
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
     }
 }

@@ -2757,7 +2757,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 514288717}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
@@ -2885,10 +2885,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDroneMovement
   speed: 1.5
   distance: 3
-  rangoAtaque: 12
+  rangoAtaque: 8
   tiempoEntreDisparos: 2
-  laserPrefab: {fileID: 4372501251555622813, guid: 5a825c54a4f3c0841a851c290df4317f, type: 3}
+  proyectilPrefab: {fileID: 2764921158748618610, guid: e1de42399d502cc45a257a7571fcb4ad, type: 3}
   puntoDisparo: {fileID: 1492990220}
+  spriteOriginalMiraDerecha: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -6105,7 +6106,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 5
+      m_TileSpriteIndex: 4294967295
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6185,7 +6186,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 5
+      m_TileSpriteIndex: 4294967295
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6205,7 +6206,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 5
+      m_TileSpriteIndex: 4294967295
       m_TileMatrixIndex: 0
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
@@ -6247,9 +6248,6 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 2376107565742220442, guid: 6538d1515f4e33a4686d17cebc550fca, type: 3}
-  - serializedVersion: 2
-    m_RefCount: 3
-    m_Data: {fileID: 1345321338}
   m_TileMatrixArray:
   - serializedVersion: 2
     m_RefCount: 65
@@ -6924,7 +6922,7 @@ Transform:
   m_GameObject: {fileID: 1492990219}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.263, y: -0.148, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
