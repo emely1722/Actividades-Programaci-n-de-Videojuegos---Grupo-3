@@ -6248,6 +6248,9 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 1
     m_Data: {fileID: 2376107565742220442, guid: 6538d1515f4e33a4686d17cebc550fca, type: 3}
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 1345321338}
   m_TileMatrixArray:
   - serializedVersion: 2
     m_RefCount: 65
@@ -8105,6 +8108,8 @@ MonoBehaviour:
   vidaActual: 0
   barraVida: {fileID: 2046548991}
   tiempoInvulnerable: 1
+  animator: {fileID: 2100516686}
+  triggerDanio: Hurt
 --- !u!1 &2114986971
 GameObject:
   m_ObjectHideFlags: 0
